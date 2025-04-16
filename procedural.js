@@ -1,4 +1,4 @@
-// There is some improvements still needed like the ace handling and also the logic behind how to draw cards without replacement, ie. the game would be played with just one deck of cards.
+// This is the original procedural implementation with somewhat spaghetti code
 
 let player = {
     name: "Player #1",
@@ -14,9 +14,19 @@ let messageEl = document.getElementById("message-el")
 let sumEl = document.getElementById("sum-el")
 let cardsEl = document.getElementById("cards-el")
 let playerEl = document.getElementById("player-el")
-let card = getRandomCard()
+let shuffledDeck = []
+
 
 playerEl.textContent = player.name + ": $" + player.chips
+
+
+function shuffleDeck() {
+    shuffledDeck = Object.values(deck)
+    for (let i = shuffledDeck.length - 1; i >= 1; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
+    }
+}
 
 function startGame() {
     shuffleDeck()
@@ -89,15 +99,7 @@ let deck = {
     52:  { name: "king_of_diamonds",  value: 10,suit: 4, file_location: "/project/co6f14249b468fa5fdd02f1f5/images/Playing Cards/Playing Cards/PNG-cards-1.3/king_of_diamonds.png" }
   };
 
-let shuffledDeck = []
 
-function shuffleDeck() {
-    shuffledDeck = Object.values(deck)
-    for (let i = shuffledDeck.length - 1; i >= 1; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
-    }
-}
 
  function getRandomCard(){
      return shuffledDeck.pop()
@@ -113,14 +115,14 @@ function renderGame() {
         src.append(img);
     }
     
-    sumEl.textContent = "Sum: " + sum
-    if (sum <= 20) {
+    sumEl.textContent = "Sum: " + sumOfStartingHand
+    if (sumOfStartingHand <= 20) {
         message = "Do you want to draw a new card?"
-    } else if (sum === 21) {
+    } else if (sumOfStartingHand === 21) {
         message = "You've got Blackjack!"
         hasBlackJack = true
     }
-    else if (sum === 21) {
+    else if (sumOfStartingHand === 21) {
         message = "You've got Blackjack!"
         hasBlackJack = true
     } else {
@@ -132,19 +134,23 @@ function renderGame() {
 
 
 function newCard() {
+    let card = getRandomCard()
     if (isAlive === true && hasBlackJack === false) {
         shuffleDeck()
         console.log(card)
         calculateHand()
         cards.push(card)
-        renderGame()        
+        calculateHand(card)   
+        renderGame()     
     }
 }
 
-function calculateHand(){
+function calculateHand(card){
     sumOfStartingHand += card.value
     if (sumOfStartingHand === 21 ){
-        
+        hasBlackJack = true
+    } else if (sumOfStartingHand ){
+
     }
 }
 
